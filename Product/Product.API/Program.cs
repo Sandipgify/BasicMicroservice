@@ -1,6 +1,8 @@
 using Product.API;
+using Product.API.Middleware;
 using Product.Application;
 using Product.Infrastructure;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ builder.Services.AddApiServices().
     AddInfrastructure();
 
 builder.Services.AddServices();
+
+builder.Services.AddDbContext(builder.Configuration);
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -31,6 +35,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseSerilogRequestLogging();
+
+app.UseMiddleware<GlobalErrorHandler>();
 
 app.MapControllers();
 

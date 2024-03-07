@@ -2,7 +2,7 @@
 {
     public class CategoryRepository : Repository<Category>, ICategoryRepository
     {
-        protected CategoryRepository(ProductDbContext dbContext) : base(dbContext)
+        public CategoryRepository(ProductDbContext dbContext) : base(dbContext)
         {
         }
     }

@@ -1,6 +1,9 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Product.Infrastructure.Context;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Reflection;
 
 namespace Product.API;
 public static class DependencyResolution
@@ -34,5 +37,14 @@ public static class DependencyResolution
         return uiOptions;
     }
 
+    public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddEntityFrameworkNpgsql().AddDbContext<ProductDbContext>(opt =>
+        {
+            opt.UseNpgsql(configuration.GetConnectionString("ConnectionStr"), x => x.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName));
+        });
+
+        return services;
+    }
 
 }

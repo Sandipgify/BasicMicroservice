@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Product.Application.Infrastructure;
+using Product.Application.Interface;
+using Product.Application.Services;
 
 namespace Product.Application
 {
@@ -9,6 +12,11 @@ namespace Product.Application
         {
             var assembly = typeof(DependencyResolution).Assembly;
             services.AddValidatorsFromAssembly(assembly);
+
+            #region services
+            services.AddScoped<ICategoryService,CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            #endregion
             return services;
         }
     }
