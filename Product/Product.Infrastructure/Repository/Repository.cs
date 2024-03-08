@@ -23,6 +23,12 @@ namespace Product.Infrastructure.Repository
         {
             return await _dbContext.Set<T>().AsNoTracking().AnyAsync(predicate);
         }
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            IQueryable<T> query = _dbContext.Set<T>();
+            return await (predicate is not null ? query.Where(predicate) : query).AsNoTracking().ToListAsync();
+        }
+        public async Task<T> GetById(object id) => await _dbContext.Set<T>().FindAsync(id);
 
     }
 }

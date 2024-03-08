@@ -13,6 +13,7 @@ builder.Services.AddApiServices().
 builder.Services.AddServices();
 
 builder.Services.AddDbContext(builder.Configuration);
+builder.Services.AddTransient<GlobalErrorHandler>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -36,7 +37,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 
 app.UseMiddleware<GlobalErrorHandler>();
 

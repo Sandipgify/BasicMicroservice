@@ -17,7 +17,7 @@ namespace Product.Application.Services
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<long> Create(CreateCategoryRequestDTO requestDTO)
+        public async Task<long> Create(CategoryDTO requestDTO)
         {
             var category = requestDTO.ToCategory();
             category.IsActive = true;
@@ -25,6 +25,29 @@ namespace Product.Application.Services
             await _categoryRepository.AddAsync(category);
             await _unitOfWork.SaveAsync();
             return category.Id;
+        }
+
+        public async Task Update(CategoryDTO requestDTO, long id)
+        {
+            var category = await _categoryRepository.GetById(id);
+            category.Name = requestDTO.Name;
+            _categoryRepository.Update(category);
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task Delete(long categoryId)
+        {
+            var category = await _categoryRepository.GetById(categoryId);
+            category.IsActive = false;
+            _categoryRepository.Update(category);
+            await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<IEnumerable<CategoryResponseDTO>> Get()
+        {
+            var category = await _categoryRepository.GetAllAsync(x=>x.IsActive);
+            var categoryResponse = category.Select(x => x.ToCategoryResponse());
+            return categoryResponse;
         }
     }
 }

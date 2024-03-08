@@ -9,5 +9,7 @@ namespace Product.Application.Infrastructure
         Task AddRangeAsync(IEnumerable<T> t);
         void UpdateRange(IEnumerable<T> t);
         Task<bool> Exist(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate = null);
+        Task<T> GetById(object id);
     }
 }

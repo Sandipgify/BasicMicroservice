@@ -23,9 +23,11 @@ namespace Product.API.Controllers
         [SwaggerOperation(
             Summary = "Create category",
             Description = "Create product category",
-            OperationId = "Customer.create")]
+            OperationId = "category.create",
+           Tags = new[] { "Category" })]
         [SwaggerResponse(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create(CreateCategoryRequestDTO request)
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create(CategoryDTO request)
         {
             try
             {
@@ -38,6 +40,73 @@ namespace Product.API.Controllers
                 throw;
             }
             
+        }
+
+        [HttpPut]
+        [SwaggerOperation(
+            Summary = "Update category",
+            Description = "update product category",
+            OperationId = "category.update",
+           Tags = new[] { "Category" })]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        [SwaggerResponse(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(CategoryDTO request, long id)
+        {
+            try
+            {
+                await _categoryService.Update(request, id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
+
+        }
+
+        [HttpGet]
+        [SwaggerOperation(
+           Summary = "Get category",
+           Description = "Get category list",
+           OperationId = "category.get",
+           Tags = new[] { "Category" })]
+        [SwaggerResponse(StatusCodes.Status200OK, type: typeof(IEnumerable<CategoryResponseDTO>))]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+               var category = await _categoryService.Get();
+                return Ok(category);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
+
+        }
+
+        [HttpDelete]
+        [SwaggerOperation(
+           Summary = "Delete category",
+           Description = "Delete product category",
+           OperationId = "category.delete",
+           Tags = new[] { "Category" })]
+        [SwaggerResponse(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete(long id)
+        {
+            try
+            {
+               await _categoryService.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
+
         }
     }
 }
