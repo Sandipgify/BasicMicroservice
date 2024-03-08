@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using FluentValidation;
+using System.Net;
 using System.Text.Json;
 
 namespace Product.API.Middleware
@@ -15,7 +16,7 @@ namespace Product.API.Middleware
             {
                 await next(context);
             }
-            catch (FluentValidation.ValidationException e)
+            catch (ValidationException e)
             {
                 await HandleValidationExceptionAsync(context, e);
             }
@@ -25,14 +26,13 @@ namespace Product.API.Middleware
             }
         }
 
-        private async Task HandleValidationExceptionAsync(HttpContext context, FluentValidation.ValidationException validationException)
+        private async Task HandleValidationExceptionAsync(HttpContext context, ValidationException validationException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             var errors = validationException.Errors
         .Select(error => new { fieldName = error.PropertyName, message = error.ErrorMessage })
         .ToList();
-            var response = new { statusCode = 400, errors };
-            string json = JsonSerializer.Serialize(response);
+            string json = JsonSerializer.Serialize(errors);
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(json);
         }

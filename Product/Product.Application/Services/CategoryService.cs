@@ -1,7 +1,10 @@
-﻿using Product.Application.DTO.Category;
+﻿using FluentValidation;
+using Product.Application.DTO;
 using Product.Application.Infrastructure;
 using Product.Application.Interface;
 using Product.Application.Mapper;
+using Product.Application.Validation.Category;
+using Product.Domain.Entity;
 
 namespace Product.Application.Services
 {
@@ -19,6 +22,10 @@ namespace Product.Application.Services
 
         public async Task<long> Create(CategoryDTO requestDTO)
         {
+            #region Validation
+            var validation = new CreateCategoryValidation(_categoryRepository);
+            await validation.ValidateAndThrowAsync(requestDTO);
+            #endregion
             var category = requestDTO.ToCategory();
             category.IsActive = true;
             category.CreatedAt = DateTime.UtcNow;
@@ -27,8 +34,12 @@ namespace Product.Application.Services
             return category.Id;
         }
 
-        public async Task Update(CategoryDTO requestDTO, long id)
+        public async Task Update(UpdateCategoryDTO requestDTO, long id)
         {
+            #region Validation
+            var validation = new UpdateCategoryValidation(_categoryRepository);
+            await validation.ValidateAndThrowAsync(new UpdateCategoryValidationRequest(requestDTO,id));
+            #endregion
             var category = await _categoryRepository.GetById(id);
             category.Name = requestDTO.Name;
             _categoryRepository.Update(category);
@@ -37,6 +48,11 @@ namespace Product.Application.Services
 
         public async Task Delete(long categoryId)
         {
+            #region Validation
+            var validation = new DeleteCategoryValidation(_categoryRepository);
+            await validation.ValidateAndThrowAsync(categoryId);
+            #endregion
+
             var category = await _categoryRepository.GetById(categoryId);
             category.IsActive = false;
             _categoryRepository.Update(category);

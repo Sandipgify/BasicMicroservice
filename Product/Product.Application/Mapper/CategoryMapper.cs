@@ -1,4 +1,4 @@
-﻿using Product.Application.DTO.Category;
+﻿using Product.Application.DTO;
 using Product.Domain.Entity;
 using System.Runtime.CompilerServices;
 

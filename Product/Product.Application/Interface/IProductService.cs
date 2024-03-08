@@ -1,6 +1,12 @@
-﻿namespace Product.Application.Interface
+﻿using Product.Application.DTO;
+
+namespace Product.Application.Interface
 {
-    internal interface IProductService
+    public interface IProductService
     {
+        Task<long> Create(ProductDTO requestDTO);
+        Task Update(UpdateProductDTO requestDTO, long id);
+        Task Delete(long productId);
+        Task<IEnumerable<ProductResponseDTO>> Get();
     }
 }
