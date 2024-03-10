@@ -37,7 +37,8 @@ namespace Order.Application.Validation
 
         private async Task<bool> OrderExist(long id, CancellationToken cancellationToken)
         {
-            return await _orderRepository.Exist(x => x.Id == id && x.IsActive);
+            var test= await _orderRepository.Exist(x => x.Id == id && x.IsActive);
+            return test;
         }
     }
 }
