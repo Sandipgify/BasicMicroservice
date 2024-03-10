@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Product.Infrastructure.EntityConfiguration;
+﻿using Product.Infrastructure.EntityConfiguration;
 
 namespace Product.Infrastructure.Context
 {

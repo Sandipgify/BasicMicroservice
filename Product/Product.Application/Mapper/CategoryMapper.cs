@@ -1,6 +1,4 @@
-﻿using Product.Application.DTO;
-using Product.Domain.Entity;
-using System.Runtime.CompilerServices;
+﻿using Product.Domain.Entity;
 
 namespace Product.Application.Mapper
 {

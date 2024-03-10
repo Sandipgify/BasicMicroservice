@@ -1,9 +1,4 @@
-﻿using FluentValidation;
-using Product.Application.DTO;
-using Product.Application.Infrastructure;
-using Product.Application.Interface;
-using Product.Application.Mapper;
-using Product.Application.Validation.Product;
+﻿using Product.Application.Validation.Product;
 
 namespace Product.Application.Services
 {
