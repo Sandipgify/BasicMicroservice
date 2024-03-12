@@ -1,7 +1,7 @@
 ﻿using Order.Application.DTO;
 using Shouldly;
 
-namespace Order.Test.Test
+namespace Order.Test.Test.Order
 {
     public class CreateOrderTest
     {

@@ -38,7 +38,7 @@ namespace Product.Application.Validation.Product
 
         private async Task<bool> ProductNameExist(UpdateProductDTO productDTO, CancellationToken cancellationToken)
         {
-            return await _productRepository.Exist(x => x.Id != productDTO.Id && x.Name == productDTO.Name && x.IsActive);
+            return await _productRepository.ProductNameExist(productDTO.Name, productDTO.Id);
         }
 
         private async Task<bool> CategoryExist(long categoryId, CancellationToken cancellationToken)

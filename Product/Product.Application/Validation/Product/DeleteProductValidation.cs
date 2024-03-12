@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using Product.Application.Infrastructure;
-
-namespace Product.Application.Validation.Product
+﻿namespace Product.Application.Validation.Product
 {
     internal class DeleteProductValidation:AbstractValidator<long>
     {

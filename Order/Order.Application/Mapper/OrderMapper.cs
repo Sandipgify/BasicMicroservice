@@ -20,7 +20,7 @@ namespace Order.Application.Mapper
                OrderDate = reqest.OrderDate.ToString("yyyy-MM-dd"),
                CreatedAt = reqest.CreatedAt.ToString("yyyy-MM-dd"),
                OrderType = reqest.OrderType.ToString(),
-               OrderItems = reqest.OrderItems?.Select(item => new OrderItemDTO { Price = item.Price, ProductId = item.ProductId, Quantity = item.Quantity}).ToList() ?? new List<OrderItemDTO>()
+               OrderItems = reqest.OrderItems?.Select(item => new OrderItemDTO { Id=item.Id, Price = item.Price, ProductId = item.ProductId, Quantity = item.Quantity}).ToList() ?? new List<OrderItemDTO>()
            };
     }
 }

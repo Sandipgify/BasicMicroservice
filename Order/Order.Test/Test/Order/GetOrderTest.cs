@@ -1,7 +1,7 @@
 ﻿using Order.Domain.Entity;
 using Shouldly;
 
-namespace Order.Test.Test
+namespace Order.Test.Test.Order
 {
     public class GetOrderTest
     {
@@ -16,16 +16,16 @@ namespace Order.Test.Test
             _fixture = new Fixture();
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _orderService = new OrderService(null, _orderRepositoryMock.Object);
-           _orderFixture= _fixture.Create<List<Domain.Entity.Order>>();
+            _orderFixture = _fixture.Create<List<Domain.Entity.Order>>();
             _orderRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(_orderFixture);
         }
 
         [Test]
         public async Task Get_Orders_Should_Return_OrderResponses()
         {
-            
 
-          
+
+
             var result = await _orderService.Get();
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();

@@ -1,0 +1,9 @@
+global using NUnit.Framework;
+global using AutoFixture;
+global using FluentValidation;
+global using Moq;
+global using Product.Application.Infrastructure;
+global using Product.Application.Services;
+global using System.Linq.Expressions;
+global using Product.Application.DTO;
+global using Shouldly;

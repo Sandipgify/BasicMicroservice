@@ -18,8 +18,15 @@ builder.Services.AddTransient<GlobalErrorHandler>();
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSwaggerGen();
+    Product.API.DependencyResolution.ConfigureAuthentication(options);
 });
 
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -35,9 +42,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication();
 
-//app.UseSerilogRequestLogging();
+app.UseAuthorization();
 
 app.UseMiddleware<GlobalErrorHandler>();
 

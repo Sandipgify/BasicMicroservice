@@ -2,7 +2,7 @@
 using Order.Application.Validation;
 using Shouldly;
 
-namespace Order.Test.Test
+namespace Order.Test.Test.Order
 {
     public class UpdateOrderTest
     {
@@ -10,7 +10,6 @@ namespace Order.Test.Test
         private Mock<IOrderRepository> _orderRepositoryMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private OrderService _orderService;
-        private UpdateOrderValidationRequest _validationRequest;
         private UpdateOrderDTO _updateOrder;
         public UpdateOrderTest()
         {
@@ -50,7 +49,7 @@ namespace Order.Test.Test
         [Test]
         public async Task Should_Throw_ValidationException_When_Invalid_Order()
         {
-           
+
             _orderRepositoryMock.Setup(repo => repo.Exist(It.IsAny<Expression<Func<Domain.Entity.Order, bool>>>()))
                 .ReturnsAsync(false);
 
@@ -76,8 +75,8 @@ namespace Order.Test.Test
         [Test]
         public async Task Should_Throw_ValidationException_When_Negative_Quantity()
         {
-           
-            _updateOrder.OrderItems.First().Quantity = -1;            
+
+            _updateOrder.OrderItems.First().Quantity = -1;
 
             await Should.ThrowAsync<ValidationException>(async () => await _orderService.Update(_updateOrder, It.IsAny<long>()));
 

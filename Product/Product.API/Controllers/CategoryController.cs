@@ -1,7 +1,11 @@
-﻿namespace Product.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+using Serilog;
+
+namespace Product.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly ILogger<CategoryController> _logger;
@@ -30,10 +34,10 @@ public class CategoryController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
             throw;
         }
-        
+
     }
 
     [HttpPut]
@@ -53,7 +57,7 @@ public class CategoryController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
             throw;
         }
 
@@ -70,12 +74,12 @@ public class CategoryController : ControllerBase
     {
         try
         {
-           var category = await _categoryService.Get();
+            var category = await _categoryService.Get();
             return Ok(category);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
             throw;
         }
 
@@ -92,12 +96,12 @@ public class CategoryController : ControllerBase
     {
         try
         {
-           await _categoryService.Delete(id);
+            await _categoryService.Delete(id);
             return NoContent();
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, ex.Message);
+            Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
             throw;
         }
 

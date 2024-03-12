@@ -1,8 +1,4 @@
-﻿using FluentValidation;
-using Product.Application.DTO;
-using Product.Application.Infrastructure;
-
-namespace Product.Application.Validation.Category;
+﻿namespace Product.Application.Validation.Category;
 
 internal class CreateCategoryValidation : AbstractValidator<CategoryDTO>
 {

@@ -1,7 +1,11 @@
-﻿namespace Product.API.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+using Serilog;
+
+namespace Product.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly ILogger<CategoryController> _logger;
@@ -31,7 +35,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -53,7 +57,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -74,7 +78,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -95,7 +99,7 @@
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }

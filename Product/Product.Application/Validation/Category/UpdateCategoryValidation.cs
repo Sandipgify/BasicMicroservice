@@ -1,8 +1,4 @@
-﻿using FluentValidation;
-using Product.Application.DTO;
-using Product.Application.Infrastructure;
-
-namespace Product.Application.Validation.Category
+﻿namespace Product.Application.Validation.Category
 {
     public record UpdateCategoryValidationRequest(UpdateCategoryDTO CategoryDTO, long id);
     internal class UpdateCategoryValidation : AbstractValidator<UpdateCategoryValidationRequest>
@@ -30,7 +26,7 @@ namespace Product.Application.Validation.Category
 
         private async Task<bool> CategoryNameExist(UpdateCategoryDTO categoryDTO, CancellationToken cancellationToken)
         {
-            return await _categoryRepository.Exist(x => x.Id != categoryDTO.Id && x.Name == categoryDTO.Name  && x.IsActive);
+            return await _categoryRepository.CategoryNameExist(categoryDTO.Name,categoryDTO.Id);
         }
     }
 }

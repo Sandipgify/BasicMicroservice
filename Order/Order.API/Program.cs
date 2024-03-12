@@ -1,4 +1,5 @@
 using Order.API.Middleware;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,11 +16,18 @@ builder.Services.AddTransient<GlobalErrorHandler>();
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSwaggerGen();
+    Order.API.DependencyResolution.ConfigureAuthentication(options);
 });
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,6 +38,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -1,4 +1,4 @@
-﻿namespace Order.Test.Test
+﻿namespace Order.Test.Test.Order
 {
     public class DeleteOrderTest
     {

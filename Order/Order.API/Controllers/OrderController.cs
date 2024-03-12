@@ -1,8 +1,11 @@
-﻿using Order.Application.DTO;
+﻿using Microsoft.AspNetCore.Authorization;
+using Order.Application.DTO;
 using Order.Application.Interface;
+using Serilog;
 
 namespace Order.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
@@ -34,7 +37,7 @@ namespace Order.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -56,7 +59,7 @@ namespace Order.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -77,7 +80,7 @@ namespace Order.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
@@ -98,7 +101,7 @@ namespace Order.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                Log.Error("{@errorMsg} \n{@exception}\n", ex.Message, ex);
                 throw;
             }
         }
