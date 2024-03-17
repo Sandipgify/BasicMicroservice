@@ -1,10 +1,15 @@
-﻿using FluentValidation;
+﻿using Confluent.Kafka;
+using FluentValidation;
 using Order.Application.DTO;
 using Order.Application.Infrastructure;
 using Order.Application.Interface;
 using Order.Application.Mapper;
+using Order.Application.Provider.Interfaces;
 using Order.Application.Validation;
 using Order.Domain.Entity;
+using Newtonsoft;
+using System.Text.Json.Nodes;
+using Newtonsoft.Json;
 
 namespace Order.Application.Services
 {
@@ -12,11 +17,13 @@ namespace Order.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderRepository _orderRepository;
+        private readonly IKafkaProducerProvider _kafkaProducerProvider;
 
-        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository)
+        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IKafkaProducerProvider kafkaProducerProvider)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
+            _kafkaProducerProvider = kafkaProducerProvider;
         }
 
         public async Task<long> Create(OrderDTO requestDTO)
@@ -31,6 +38,15 @@ namespace Order.Application.Services
             order.IsActive =true;
             await _orderRepository.AddAsync(order);
             await _unitOfWork.SaveAsync();
+
+            using var producer = _kafkaProducerProvider.GetProducer<string, string>();
+
+            foreach (var item in order.OrderItems) {
+                var value = JsonConvert.SerializeObject(new UpdateAvailableQuantityDTO { Quantity = item.Quantity, Type = (int)order.OrderType });
+                var result = await producer.ProduceAsync("ItemOrdered", new Message<string, string> { Key = item.ProductId.ToString(), Value =  value });
+                Console.WriteLine($"Item {item.ProductId} {item.Quantity} Ordered message sent");
+            }
+
             return order.Id;
         }
 

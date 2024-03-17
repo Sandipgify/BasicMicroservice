@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Confluent.Kafka;
+using Microsoft.AspNetCore.Authorization;
 using Order.Application.DTO;
 using Order.Application.Interface;
 using Serilog;
@@ -12,12 +13,14 @@ namespace Order.API.Controllers
     {
         private readonly ILogger<OrderController> _logger;
         private readonly IOrderService _orderService;
+        private readonly IConfiguration _configuration;
 
         public OrderController(ILogger<OrderController> logger,
-            IOrderService orderService)
+            IOrderService orderService, IConfiguration configuration)
         {
             _logger = logger;
             _orderService = orderService;
+            _configuration = configuration;
         }
         [HttpPost]
         [SwaggerOperation(
@@ -33,7 +36,6 @@ namespace Order.API.Controllers
             {
                 long orderId = await _orderService.Create(request);
                 return Ok();
-                //return CreatedAtAction(nameof(Get), new { id = orderId }, null);
             }
             catch (Exception ex)
             {

@@ -20,7 +20,7 @@ namespace Product.Application.Services
         public async Task<long> Create(ProductDTO requestDTO)
         {
             #region Validation
-            var validation = new CreateProductValidation(_productRepository,_categoryRepository);
+            var validation = new CreateProductValidation(_productRepository, _categoryRepository);
             await validation.ValidateAndThrowAsync(requestDTO);
             #endregion
 
@@ -36,7 +36,7 @@ namespace Product.Application.Services
         public async Task Update(UpdateProductDTO requestDTO, long id)
         {
             #region Validation
-            var validation = new UpdateProductValidation(_productRepository,_categoryRepository);
+            var validation = new UpdateProductValidation(_productRepository, _categoryRepository);
             await validation.ValidateAndThrowAsync(new UpdateProductValidationRequest(requestDTO, id));
             #endregion
 
@@ -69,5 +69,21 @@ namespace Product.Application.Services
             var productResponses = products.Select(x => x.ToProductResponse());
             return productResponses;
         }
+
+        public async Task UpdateAvailableQuantity(long prouductId, UpdateAvailableQuantityDTO update)
+        {
+            var product = await _productRepository.GetById(prouductId);
+            if (update.Type == 1)
+            {
+                product.QuantityAvailable += update.Quantity;
+            }
+            else
+            {
+                product.QuantityAvailable -= update.Quantity;
+            }
+            _productRepository.Update(product);
+            await _unitOfWork.SaveAsync();
+        }
+
     }
 }

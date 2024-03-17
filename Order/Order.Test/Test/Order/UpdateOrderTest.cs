@@ -21,7 +21,7 @@ namespace Order.Test.Test.Order
         {
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object);
+            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object,null);
             _updateOrder = _fixture.Create<UpdateOrderDTO>();
 
             _orderRepositoryMock.Setup(repo => repo.Exist(It.IsAny<Expression<Func<Domain.Entity.Order, bool>>>()))

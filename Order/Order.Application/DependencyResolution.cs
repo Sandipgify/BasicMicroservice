@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Order.Application.Interface;
+using Order.Application.Provider;
+using Order.Application.Provider.Interfaces;
 using Order.Application.Services;
 
 namespace Order.Application
@@ -14,6 +16,7 @@ namespace Order.Application
 
             #region services
             services.AddScoped<IOrderService, OrderService>();
+            services.AddSingleton<IKafkaProducerProvider, KafkaProducerProvider>();
             #endregion
             return services;
         }

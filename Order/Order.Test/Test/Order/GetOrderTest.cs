@@ -15,7 +15,7 @@ namespace Order.Test.Test.Order
         {
             _fixture = new Fixture();
             _orderRepositoryMock = new Mock<IOrderRepository>();
-            _orderService = new OrderService(null, _orderRepositoryMock.Object);
+            _orderService = new OrderService(null, _orderRepositoryMock.Object, null);
             _orderFixture = _fixture.Create<List<Domain.Entity.Order>>();
             _orderRepositoryMock.Setup(repo => repo.GetAll()).ReturnsAsync(_orderFixture);
         }

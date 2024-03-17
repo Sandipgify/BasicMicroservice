@@ -1,8 +1,10 @@
 using Product.API;
+using Product.API.Controllers;
 using Product.API.Middleware;
 using Product.Application;
 using Product.Infrastructure;
 using Serilog;
+using System.ComponentModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +23,12 @@ builder.Services.AddSwaggerGen(options =>
     Product.API.DependencyResolution.ConfigureAuthentication(options);
 });
 
-
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
 
 builder.Services.AddAuthentication(builder.Configuration);
+
 
 var app = builder.Build();
 
@@ -50,4 +52,15 @@ app.UseMiddleware<GlobalErrorHandler>();
 
 app.MapControllers();
 
+
+new Thread(async () => {
+    var logger = app.Services.GetService<ILogger<ProductOrderedConsumerService>>();
+    var consumerService = new ProductOrderedConsumerService(builder.Configuration, logger, app);
+    var token = new CancellationToken();
+    await consumerService.ExecuteAsync(token);
+}).Start();
+
 app.Run();
+
+
+

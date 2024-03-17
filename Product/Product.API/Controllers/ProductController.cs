@@ -31,7 +31,6 @@ namespace Product.API.Controllers
             {
                 long productId = await _productService.Create(request);
                 return Ok();
-                //return CreatedAtAction(nameof(Get), new { id = productId }, null);
             }
             catch (Exception ex)
             {

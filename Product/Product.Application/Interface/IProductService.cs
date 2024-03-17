@@ -8,5 +8,6 @@ namespace Product.Application.Interface
         Task Update(UpdateProductDTO requestDTO, long id);
         Task Delete(long productId);
         Task<IEnumerable<ProductResponseDTO>> Get();
+        Task UpdateAvailableQuantity(long prouductId, UpdateAvailableQuantityDTO update);
     }
 }

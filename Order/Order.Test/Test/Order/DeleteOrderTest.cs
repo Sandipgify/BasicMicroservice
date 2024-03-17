@@ -16,7 +16,7 @@
         {
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object);
+            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object, null);
             var order = _fixture.Create<Domain.Entity.Order>();
             _orderRepositoryMock.Setup(repo => repo.GetById(It.IsAny<long>())).ReturnsAsync(order);
 

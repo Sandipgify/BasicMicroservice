@@ -1,4 +1,5 @@
 ﻿using Order.Application.DTO;
+using Order.Application.Provider.Interfaces;
 using Shouldly;
 
 namespace Order.Test.Test.Order
@@ -9,6 +10,7 @@ namespace Order.Test.Test.Order
         private Mock<IOrderRepository> _orderRepositoryMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private OrderService _orderService;
+        private Mock<IKafkaProducerProvider> _kafkaProducerServiceMock;
 
         public CreateOrderTest()
         {
@@ -20,7 +22,7 @@ namespace Order.Test.Test.Order
         {
             _orderRepositoryMock = new Mock<IOrderRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object);
+            _orderService = new OrderService(_unitOfWorkMock.Object, _orderRepositoryMock.Object, _kafkaProducerServiceMock.Object);
         }
 
         [Test]

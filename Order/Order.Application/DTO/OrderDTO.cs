@@ -33,4 +33,10 @@ namespace Order.Application.DTO
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
     }
+
+    public class UpdateAvailableQuantityDTO
+    {
+        public decimal Quantity { get; set; }
+        public int Type { get; set; }
+    }
 }
