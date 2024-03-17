@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Product.Application.Infrastructure;
 using Product.Application.Interface;
+using Product.Application.Provider;
+using Product.Application.Provider.Interfaces;
 using Product.Application.Services;
 
 namespace Product.Application
@@ -12,6 +14,8 @@ namespace Product.Application
         {
             var assembly = typeof(DependencyResolution).Assembly;
             services.AddValidatorsFromAssembly(assembly);
+
+            services.AddSingleton<IKafkaProducerProvider, KafkaProducerProvider>();
 
             #region services
             services.AddScoped<ICategoryService,CategoryService>();

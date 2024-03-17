@@ -85,5 +85,9 @@ namespace Product.Application.Services
             await _unitOfWork.SaveAsync();
         }
 
+        public Task<bool> Exists(long productId)
+        {
+            return _productRepository.Exist(x => x.Id == productId);
+        }
     }
 }

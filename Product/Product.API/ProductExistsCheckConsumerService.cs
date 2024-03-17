@@ -1,16 +1,18 @@
 ﻿using Confluent.Kafka;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Product.Application.Provider.Interfaces;
+using Product.Domain.Entity;
 
 namespace Product.API
 {
-    public class ProductOrderedConsumerService
+    public class ProductExistsCheckConsumerService
     {
         private readonly ILogger<ProductOrderedConsumerService> _logger;
         private readonly IApplicationBuilder _builder;
         private IConsumer<string, string> _consumer;
 
-        public ProductOrderedConsumerService(IConfiguration configuration, ILogger<ProductOrderedConsumerService> logger, WebApplication app)
+        public ProductExistsCheckConsumerService(IConfiguration configuration, ILogger<ProductOrderedConsumerService> logger, WebApplication app)
         {
             _logger = logger;
             _builder = app;
@@ -26,7 +28,7 @@ namespace Product.API
 
         public async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _consumer.Subscribe("ItemOrdered");
+            _consumer.Subscribe("ItemExists");
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -44,12 +46,27 @@ namespace Product.API
             {
                 var consumeResult = _consumer.Consume(stoppingToken);
 
-                var productId = Convert.ToInt64(consumeResult.Message.Key);
-                UpdateAvailableQuantityDTO updateAvailableQuantity = JsonConvert.DeserializeObject<UpdateAvailableQuantityDTO>(consumeResult.Message.Value)!;
+                var requestId = consumeResult.Message.Key;
+                var productId = consumeResult.Message.Value;
 
                 var _productService = _builder.ApplicationServices.CreateScope().ServiceProvider.GetService<IProductService>();
 
-                await _productService.UpdateAvailableQuantity(productId, updateAvailableQuantity);
+                var exists = await _productService.Exists(Convert.ToInt32(productId));
+
+                var producerProvider = _builder.ApplicationServices.GetService<IKafkaProducerProvider>();
+
+                using(var producer = producerProvider.GetProducer<string, string>())
+                {
+                    var value = JsonConvert.SerializeObject(new {
+                        ProductId = productId,
+                        IsValid = exists
+                    });
+                    await producer.ProduceAsync("ItemExists", new Message<string, string>()
+                    {
+                        Key = requestId,
+                        Value = value
+                    });
+                }
 
                 _logger.LogInformation($"Received Item Ordered: {productId}");
             }

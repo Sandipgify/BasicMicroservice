@@ -10,6 +10,7 @@ using Order.Domain.Entity;
 using Newtonsoft;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using Order.Application.Consumers;
 
 namespace Order.Application.Services
 {
@@ -18,12 +19,14 @@ namespace Order.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderRepository _orderRepository;
         private readonly IKafkaProducerProvider _kafkaProducerProvider;
+        private readonly ProductExistsConsumerService _productExistsConsumerService;
 
-        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IKafkaProducerProvider kafkaProducerProvider)
+        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IKafkaProducerProvider kafkaProducerProvider, ProductExistsConsumerService productExistsConsumerService)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
             _kafkaProducerProvider = kafkaProducerProvider;
+            _productExistsConsumerService = productExistsConsumerService;
         }
 
         public async Task<long> Create(OrderDTO requestDTO)
@@ -32,6 +35,8 @@ namespace Order.Application.Services
             var validation = new CreateOrderValidation();
             await validation.ValidateAndThrowAsync(requestDTO);
             #endregion
+
+            await ValidateProductExists(requestDTO);
 
             var order = requestDTO.ToOrder();
             order.CreatedAt = DateTime.UtcNow;
@@ -48,6 +53,29 @@ namespace Order.Application.Services
             }
 
             return order.Id;
+        }
+
+        private async Task ValidateProductExists(OrderDTO requestDTO)
+        {
+            foreach (var item in requestDTO.OrderItems)
+            {
+                using var producer = _kafkaProducerProvider.GetProducer<string, string>();
+                var requestId = Guid.NewGuid().ToString();
+                await producer.ProduceAsync("ItemExists", new Message<string, string>()
+                {
+                    Key = requestId,
+                    Value = item.ProductId.ToString(),
+                });
+
+                var cancellationToken = new CancellationToken();
+                var exists = _productExistsConsumerService.Execute(cancellationToken, requestId, item.ProductId.ToString());
+
+                if(!exists)
+                {
+                    throw new Exception("Invalid product");
+                }
+
+            }
         }
 
         public async Task Update(UpdateOrderDTO requestDTO, long id)
