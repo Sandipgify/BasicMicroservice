@@ -1,18 +1,15 @@
 ﻿using Confluent.Kafka;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Product.API
 {
-    public class ProductOrderedConsumerService
+    public class ConsumerService
     {
-
-
-        private readonly ILogger<ProductOrderedConsumerService> _logger;
+        private readonly ILogger<ConsumerService> _logger;
         private readonly IApplicationBuilder _builder;
         private IConsumer<string, string> _consumer;
 
-        public ProductOrderedConsumerService(IConfiguration configuration, ILogger<ProductOrderedConsumerService> logger, WebApplication app)
+        public ConsumerService(IConfiguration configuration, ILogger<ConsumerService> logger, WebApplication app)
         {
             _logger = logger;
             _builder = app;
@@ -40,20 +37,20 @@ namespace Product.API
             _consumer.Close();
         }
 
+
         public async void ProcessKafkaMessage(CancellationToken stoppingToken)
         {
             try
             {
                 var consumeResult = _consumer.Consume(stoppingToken);
-
+               
                 var productId = Convert.ToInt64(consumeResult.Message.Key);
+
                 UpdateAvailableQuantityDTO updateAvailableQuantity = JsonConvert.DeserializeObject<UpdateAvailableQuantityDTO>(consumeResult.Message.Value)!;
 
              var _productService =   _builder.ApplicationServices.CreateScope().ServiceProvider.GetService<IProductService>();
 
                await _productService.UpdateAvailableQuantity(productId,updateAvailableQuantity);
-
-                _logger.LogInformation($"Received Item Ordered: {productId}");
             }
             catch (Exception ex)
             {

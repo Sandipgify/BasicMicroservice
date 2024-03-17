@@ -16,7 +16,7 @@ namespace Order.Application
 
             #region services
             services.AddScoped<IOrderService, OrderService>();
-            services.AddSingleton<IKafkaProducerProvider, KafkaProducerProvider>();
+            services.AddSingleton<IProducerProvider, ProducerProvider>();
             #endregion
             return services;
         }

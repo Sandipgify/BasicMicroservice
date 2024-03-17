@@ -29,6 +29,7 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Services.AddAuthentication(builder.Configuration);
 
+//builder.Services.AddHostedService<ConsumerService>();
 
 var app = builder.Build();
 
@@ -53,9 +54,10 @@ app.UseMiddleware<GlobalErrorHandler>();
 app.MapControllers();
 
 
-new Thread(async () => {
-    var logger = app.Services.GetService<ILogger<ProductOrderedConsumerService>>();
-    var consumerService = new ProductOrderedConsumerService(builder.Configuration, logger, app);
+new Thread(async () =>
+{
+    var logger = app.Services.GetService<ILogger<ConsumerService>>();
+    var consumerService = new ConsumerService(builder.Configuration, logger, app);
     var token = new CancellationToken();
     await consumerService.ExecuteAsync(token);
 }).Start();
