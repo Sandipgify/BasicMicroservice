@@ -10,7 +10,7 @@ namespace Order.Test.Test.Order
         private Mock<IOrderRepository> _orderRepositoryMock;
         private Mock<IUnitOfWork> _unitOfWorkMock;
         private OrderService _orderService;
-        private Mock<IKafkaProducerProvider> _kafkaProducerServiceMock;
+        private Mock<IProducerProvider> _kafkaProducerServiceMock;
 
         public CreateOrderTest()
         {

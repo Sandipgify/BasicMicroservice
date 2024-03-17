@@ -10,6 +10,8 @@ using Order.Domain.Entity;
 using Newtonsoft;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace Order.Application.Services
 {
@@ -17,13 +19,13 @@ namespace Order.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderRepository _orderRepository;
-        private readonly IKafkaProducerProvider _kafkaProducerProvider;
+        private readonly IProducerProvider _producerProvider;
 
-        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IKafkaProducerProvider kafkaProducerProvider)
+        public OrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IProducerProvider producerProvider)
         {
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
-            _kafkaProducerProvider = kafkaProducerProvider;
+            _producerProvider = producerProvider;
         }
 
         public async Task<long> Create(OrderDTO requestDTO)
@@ -35,15 +37,19 @@ namespace Order.Application.Services
 
             var order = requestDTO.ToOrder();
             order.CreatedAt = DateTime.UtcNow;
-            order.IsActive =true;
+            order.IsActive = true;
             await _orderRepository.AddAsync(order);
             await _unitOfWork.SaveAsync();
 
-            using var producer = _kafkaProducerProvider.GetProducer<string, string>();
+            //using var producer = producerProvider.GetProducer<string, string>();
 
-            foreach (var item in order.OrderItems) {
+            foreach (var item in order.OrderItems)
+            {
+                //    var value = jsonconvert.serializeobject(new updateavailablequantitydto { quantity = item.quantity, type = (int)order.ordertype });
+                //  await producer.produceasync("itemordered", new message<string, string> { key = item.productid.tostring(), value =  value });
+
                 var value = JsonConvert.SerializeObject(new UpdateAvailableQuantityDTO { Quantity = item.Quantity, Type = (int)order.OrderType });
-                var result = await producer.ProduceAsync("ItemOrdered", new Message<string, string> { Key = item.ProductId.ToString(), Value =  value });
+                await _producerProvider.ProduceAsync("ItemOrdered", new Message<string, string> { Key = item.ProductId.ToString(), Value = value });
                 Console.WriteLine($"Item {item.ProductId} {item.Quantity} Ordered message sent");
             }
 
@@ -98,7 +104,7 @@ namespace Order.Application.Services
 
             if (existingOrderItem == null)
             {
-                order.OrderItems.Add(new OrderItem(updatedOrderItem.ProductId, updatedOrderItem.Quantity, updatedOrderItem.Price));                
+                order.OrderItems.Add(new OrderItem(updatedOrderItem.ProductId, updatedOrderItem.Quantity, updatedOrderItem.Price));
             }
             else
             {
