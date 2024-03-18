@@ -20,15 +20,6 @@ namespace Order.Application.Provider
 
             _producer = new ProducerBuilder<string, string>(producerconfig).Build();
         }
-        //public IProducer<T, U> GetProducer<T, U>()
-        //{
-        //    var config = new ProducerConfig
-        //    {
-        //        BootstrapServers = _configuration["Kafka:BootstrapServers"],
-        //    };
-
-        //    return new ProducerBuilder<T, U>(config).Build();
-        //}
 
         public async Task ProduceAsync(string topic, Message<string,string> message)
         {
