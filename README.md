@@ -43,3 +43,4 @@ To run the project successfully, follow these steps:
 
 - This project follows clean architecture principles, ensuring separation of concerns and maintainability.
 - Unit tests are provided for each service, allowing for easy validation of functionality and regression testing.
+- Need to run kafka in you device to achieve event communication
